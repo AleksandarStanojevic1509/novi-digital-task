@@ -1,0 +1,54 @@
+# This file is used to run the application in standalone mode.
+
+version: "3.7"
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    restart: always
+    env_file: .env
+    depends_on:
+      - db-mongo
+      - db-redis
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  db-mongo:
+    image: mongo:latest
+    container_name: db-mongo
+    restart: always
+    env_file: .env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  db-mongo-ui:
+    image: mongo-express
+    container_name: db-mongo-ui
+    restart: always
+    env_file: .env
+    depends_on:
+      - db-mongo
+    ports:
+      - "8081:8081"
+
+  db-redis:
+    image: redis:6.2-alpine
+    container_name: db-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:
