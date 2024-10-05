@@ -1,6 +1,5 @@
-// src/index.tsx or src/App.tsx
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -11,12 +10,11 @@ import Home from "./pages/Home";
 import AskUs from "./pages/AskUs";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import LogoutButton from "./components/LogoutButton";
+import { IUser } from "./common/interfaces";
 
 function App() {
-  const [user, setUser] = useState<{
-    firstName: string;
-    lastName: string;
-  } | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -25,19 +23,14 @@ function App() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-  };
-
   return (
     <Router>
-      <div className="min-vh-100 bg-dark text-white">
+      <div className="min-vh-100 bg-secondary text-white">
         {/* Navbar */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
           <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">
-              My App
+              👋
             </NavLink>
             <button
               className="navbar-toggler"
@@ -79,17 +72,15 @@ function App() {
               <div className="d-flex">
                 {!user ? (
                   <>
-                    <NavLink to="/register" className="btn btn-primary me-2">
+                    <NavLink to="/register" className="btn btn-secondary me-2">
                       Register
                     </NavLink>
-                    <NavLink to="/login" className="btn btn-success">
+                    <NavLink to="/login" className="btn btn-secondary">
                       Login
                     </NavLink>
                   </>
                 ) : (
-                  <button onClick={handleLogout} className="btn btn-danger">
-                    Logout
-                  </button>
+                  <LogoutButton />
                 )}
               </div>
             </div>

@@ -14,13 +14,22 @@ export class AskUsController {
   }
 
   private setRoutes() {
-    this.router.post("/inquire", doAuth, validateDto(CreateInquireDto), this.askUs.bind(this));
+    this.router.post(
+      "/inquire",
+      doAuth,
+      validateDto(CreateInquireDto),
+      this.askUs.bind(this)
+    );
   }
 
   async askUs(req: Request, res: ICustomResponse) {
     try {
       const user = res.user;
-      const inquireData = {...req.body, userEmail: user.email, userFullName: `${user.firstName} ${user.lastName}`};
+      const inquireData = {
+        ...req.body,
+        userEmail: user.email,
+        userFullName: `${user.firstName} ${user.lastName}`,
+      };
       const inquire = await this.askUsService.askUsQuestion(inquireData);
       res.status(200).json({ user, inquire, success: true });
     } catch (error) {
@@ -29,5 +38,4 @@ export class AskUsController {
         .json({ message: (error as Error).message, success: false });
     }
   }
-
 }

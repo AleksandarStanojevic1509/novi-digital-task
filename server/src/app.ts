@@ -6,6 +6,7 @@ import { askUsController, authController } from "./common/dic";
 import { CONFIG } from "./config";
 import RedisStore from "connect-redis";
 import { RedisConnection } from "./common/cashing/redis.connection";
+import cors from "cors";
 
 export class App {
   public app: Application;
@@ -18,15 +19,29 @@ export class App {
   }
 
   private registerMiddlewares(): void {
+    this.app.use(
+      cors({
+        origin: CONFIG.server.allowedOrigins,
+        credentials: true,
+      })
+    );
     // this.app.use(pinoHttp(logger)); // if you want to use pino logger as middleware for logging requests uncoment this line and import pinoHttp
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
   }
 
   private registerRoutes(): void {
-    this.app.use("/auth", authController.router);
-    this.app.use("/ask-us", askUsController.router);
+    const routerPrefix = "/api/v1";
 
+    this.app.use(`${routerPrefix}/auth`, authController.router);
+    this.app.use(`${routerPrefix}/ask-us`, askUsController.router);
+
+    // health check route
+    this.app.get("/health", (req: Request, res: Response) => {
+      res.json({ status: "Ok" });
+    });
+
+    // 404 route
     this.app.use("/", (req: Request, res: Response) => {
       res.statusCode = 404;
       res.json({ status: "Error", message: "Not Found" });

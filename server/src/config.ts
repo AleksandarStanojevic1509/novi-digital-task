@@ -33,5 +33,6 @@ export const CONFIG = {
     port: getFromEnv("PORT", "3000"),
     sessionSecret: getFromEnv("SESSION_SECRET"),
     nodeEnv: getFromEnv("NODE_ENV"),
+    allowedOrigins: getFromEnv("ALLOWED_ORIGINS", "").split(","),
   },
 };

@@ -1,3 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.validation-error-msg-color {
+  color: #343a40;
+}
+
+.form-control.is-invalid {
+  border-color: #343a40;
+}
+
+input.is-invalid {
+  border-color: #343a40 !important;
+}
+
+.invalid-feedback {
+  display: none;
+}

@@ -1,5 +1,7 @@
 /**
  * Dependency injection container
+ * Currently, we are using the manual way to inject dependencies
+ * In the future, we can use a library like InversifyJS ot Tsyringe
  */
 
 import { AskUsController } from "../modules/ask_us/ask_us.controller";

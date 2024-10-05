@@ -1,8 +1,22 @@
 # This file is used to run the application in standalone mode.
-
 version: "3.7"
 
 services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client
+    restart: always
+    env_file: .env
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - server
+
   server:
     build:
       context: ./server
