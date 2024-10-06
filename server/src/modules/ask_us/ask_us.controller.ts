@@ -3,7 +3,7 @@ import { AskUsService } from "./ask_us.service";
 import { validateDto } from "../../common/middlewares";
 import { CreateInquireDto } from "./dtos";
 import { doAuth } from "../../common/middlewares/auth.middleware";
-import { ICustomResponse } from "../../common/interfaces";
+import { ICustomRequest } from "../../common/interfaces";
 
 export class AskUsController {
   public router: Router;
@@ -22,9 +22,9 @@ export class AskUsController {
     );
   }
 
-  async askUs(req: Request, res: ICustomResponse) {
+  async askUs(req: ICustomRequest, res: Response) {
     try {
-      const user = res.user;
+      const user = req.user;
       const inquireData = {
         ...req.body,
         userEmail: user.email,

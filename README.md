@@ -9,13 +9,13 @@
 - **Docker Compose V2:** [How to install](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 - **Node.js:** >18.x [How to install](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs)
 
-### Run application with client and server on local:
+### Run application with client and server locally:
 
-#### Client and server will be runned from local machine, and dependenices must me spined with docker compose.
+#### Client and server will be runned from local machine, and dependencies must be runned with docker compose.
 
 - **Clone Repository:** `git clone git@github.com:AleksandarStanojevic1509/novi-digital-task.git -b main novi-digital-task`
 - **Install dependency:** navgate to novi-digital-task/client `npm install` && novi-digital-task/server `npm install`
-- **Run Docker:** navigate to root folder type `docker compose up --build` this will spin mongoDB and redis
+- **Run Docker:** navigate to root folder type `docker compose up --build` to run mongoDB and redis
 - **Run Server:** navigate to server from root `cd novi-digital-task/server/ && npm run dev`
 - **Run Client:** navigate to client from root `cd novi-digital-task/client/ && npm run dev`
 - **Web app:** web app will be at `http://localhost:5173`
@@ -23,5 +23,5 @@
 ### Run standalone application:
 
 - **Clone Repository:** `git clone git@github.com:AleksandarStanojevic1509/novi-digital-task.git -b main novi-digital-task`
-- **Run Docker:** navigate to root folder type `docker compose -f docker-compose.standalone.yml up --build` this will spin whole app
+- **Run Docker:** navigate to root folder type `docker compose -f docker-compose.standalone.yml up --build` to run whole app
 - **Web app:** web app will be at `http://localhost:8080`

@@ -30,6 +30,7 @@ export class AuthController {
     try {
       const registeredUser = await this.authService.register(req.body);
       (req.session as ICustomSession).user = registeredUser;
+      (req.session as ICustomSession).sid = req.session.id;
       res.status(200).json({ user: registeredUser, success: true });
     } catch (error) {
       res
@@ -42,6 +43,7 @@ export class AuthController {
     try {
       const user = await this.authService.login(req.body);
       (req.session as ICustomSession).user = user;
+      (req.session as ICustomSession).sid = req.session.id;
       res.status(200).json({ user, success: true });
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });

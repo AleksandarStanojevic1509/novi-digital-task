@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { Status } from '../enums';
 
 export class CreateInquireDto {

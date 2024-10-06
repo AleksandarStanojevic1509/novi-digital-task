@@ -91,7 +91,7 @@ function App() {
         <div className="container mt-4">
           <Routes>
             <Route path="/" element={<Home user={user} />} />
-            <Route path="/ask-us" element={<AskUs />} />
+            <Route path="/ask-us" element={<AskUs user={user} />} />
             <Route path="/register" element={<Register setUser={setUser} />} />
             <Route path="/login" element={<Login setUser={setUser} />} />
           </Routes>

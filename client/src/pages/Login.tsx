@@ -55,6 +55,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
         {
           method: "POST",
           data: formData,
+          withCredentials: true
         }
       );
       const userData: IUser = response.data.user;
