@@ -1,43 +1,56 @@
 import React, { useState } from "react";
 import { IAskUsProps, IUser, IAskUsResponse } from "../common/interfaces";
 import { customFetcher } from "../common/fetcher";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { IInquireStatus } from "../common/enums";
 
 const AskUs: React.FC<IAskUsProps> = ({ user }) => {
   const [question, setQuestion] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!question.trim()) {
-      setError("Please enter your question.");
+      window.alert("Please enter your question.");
       return;
     }
 
     if (question.length > 500) {
-      setError("Question cannot exceed 500 characters.");
+      window.alert("Question cannot exceed 500 characters.");
       return;
     }
-    const response: AxiosResponse<IAskUsResponse> = await customFetcher(
-      "/ask-us/inquire",
-      {
-        method: "POST",
-        data: {
-          question,
-          userEmail: user?.email,
-          userFullName: `${user?.firstName} ${user?.lastName}`,
-          status: IInquireStatus.PENDING,
-        },
-        withCredentials: true,
-      }
-    );
-    const userData: IUser = response.data.user;
-    localStorage.setItem("user", JSON.stringify(userData));
 
-    setSubmitted(true);
-    setError("");
+    try {
+      const response: AxiosResponse<IAskUsResponse> = await customFetcher(
+        "/ask-us/inquire",
+        {
+          method: "POST",
+          data: {
+            question,
+            userEmail: user?.email,
+            userFullName: `${user?.firstName} ${user?.lastName}`,
+            status: IInquireStatus.PENDING,
+          },
+          withCredentials: true,
+        }
+      );
+
+      const userData: IUser = response.data.user;
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setSubmitted(true);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        // api errors
+        const apiError = error.response.data.message || "Inquire failed. Please try again.";
+        window.alert(apiError);
+      } else {
+        // all other errors
+        console.error("An login error occurred", error);
+        window.alert("An unexpected error occurred. Please try again later.");
+      }
+    }
   };
 
   const handleAskMore = () => {
@@ -68,15 +81,12 @@ const AskUs: React.FC<IAskUsProps> = ({ user }) => {
                   id="question"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  className={`form-control ${error ? "is-invalid" : ""}`}
+                  className="form-control"
                   placeholder="Type your question here"
-                  rows={6} // Set the number of visible rows (increased height)
-                  maxLength={500} // Limit to 500 characters
+                  rows={6}
+                  maxLength={500}
                   required
                 />
-                {error && (
-                  <div className="invalid-feedback text-dark">{error}</div>
-                )}
               </div>
               <button type="submit" className="btn btn-dark w-100">
                 Submit

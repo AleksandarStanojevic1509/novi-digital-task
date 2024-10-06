@@ -26,29 +26,22 @@ export class UserRepository implements IRepository<IUser> {
   }
 
   async findOne(id: string): Promise<IUser> {
-    try {
-      const user = await User.findById(id);
-      
-      if (!user) {
-        throw new Error("User not found");
-      }
+    const user = await User.findById(id);
 
-      return user;
-    } catch (error) {
-      throw new Error(`Error finding user: ${(error as Error).message}`);
+    if (!user) {
+      throw new Error("User not found by id.");
     }
+
+    return user;
   }
 
   async findOneByEmail(email: string): Promise<IUser> {
-    try {
-      const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
 
-      if (!user) {
-        throw new Error("User not found");
-      }
-      
-      return user;
-    } catch (error) {
-      throw new Error(`Error finding user: ${(error as Error).message}`);
-    }}
+    if (!user) {
+      throw new Error("User not found by email.");
+    }
+
+    return user;
+  }
 }

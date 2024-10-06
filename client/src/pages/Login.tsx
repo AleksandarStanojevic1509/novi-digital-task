@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IUser, IUserResponse } from "../common/interfaces";
@@ -46,7 +46,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
   };
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!validate()) return;
 
     try {
@@ -55,7 +55,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
         {
           method: "POST",
           data: formData,
-          withCredentials: true
+          withCredentials: true,
         }
       );
       const userData: IUser = response.data.user;
@@ -63,7 +63,15 @@ const Login: React.FC<Props> = ({ setUser }) => {
       setUser(userData);
       navigate("/");
     } catch (error) {
-      console.error("Error registering", error);
+      if (error instanceof AxiosError && error.response) {
+        // api errors
+        const apiError = error.response.data.message || "Login failed. Please try again.";
+        window.alert(apiError);
+      } else {
+        // all other errors
+        console.error("An login error occurred", error);
+        window.alert("An unexpected error occurred. Please try again later.");
+      }
     }
   };
 
@@ -110,9 +118,7 @@ const Login: React.FC<Props> = ({ setUser }) => {
             )}
           </div>
 
-          <button className="btn btn-dark w-100">
-            Login
-          </button>
+          <button className="btn btn-dark w-100">Login</button>
         </div>
       </div>
     </form>

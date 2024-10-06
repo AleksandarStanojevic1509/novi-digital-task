@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import { IUser, IUserResponse } from "../common/interfaces";
 import { customFetcher } from "../common/fetcher";
@@ -70,20 +70,33 @@ const Register: React.FC<Props> = ({ setUser }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+
     try {
       const response: AxiosResponse<IUserResponse> = await customFetcher(
         "/auth/register",
         {
           method: "POST",
           data: formData,
+          withCredentials: true,
         }
       );
+
       const userData: IUser = response.data.user;
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
       navigate("/");
     } catch (error) {
-      console.error("Error registering", error);
+      if (error instanceof AxiosError && error.response) {
+        // api errors
+        const apiError =
+          error.response.data.message ||
+          "Registration failed. Please try again.";
+        window.alert(apiError);
+      } else {
+        // all other errors
+        console.error("An error occurred", error);
+        window.alert("An unexpected error occurred. Please try again later.");
+      }
     }
   };
 
@@ -92,6 +105,7 @@ const Register: React.FC<Props> = ({ setUser }) => {
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-4">
           <h1 className="mb-4 text-center">Register</h1>
+
           <div className="mb-3">
             <label htmlFor="firstName" className="form-label">
               First Name
@@ -111,6 +125,7 @@ const Register: React.FC<Props> = ({ setUser }) => {
               </div>
             )}
           </div>
+
           <div className="mb-3">
             <label htmlFor="lastName" className="form-label">
               Last Name
@@ -130,6 +145,7 @@ const Register: React.FC<Props> = ({ setUser }) => {
               </div>
             )}
           </div>
+
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -147,6 +163,7 @@ const Register: React.FC<Props> = ({ setUser }) => {
               <div className="invalid-feedback text-dark">{errors.email}</div>
             )}
           </div>
+
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
               Password
@@ -166,6 +183,7 @@ const Register: React.FC<Props> = ({ setUser }) => {
               </div>
             )}
           </div>
+
           <button type="submit" className="btn btn-dark w-100">
             Register
           </button>

@@ -28,15 +28,15 @@ const doAuth = async (
       });
     }
 
-    const user = session ? JSON.parse(session).user : null;
-    if (!user) {
+    const userId = session ? JSON.parse(session).userId : null;
+    if (!userId) {
       return res.status(401).json({
         message: "Unauthorized: missing user in session data",
         success: false,
       });
     }
 
-    req.user = await userRepository.findOne(user._id);
+    req.user = await userRepository.findOne(userId);
 
     if (req.user) {
       return next();

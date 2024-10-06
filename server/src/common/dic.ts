@@ -11,6 +11,7 @@ import { AuthController } from "../modules/auth/auth.controller";
 import { AuthService } from "../modules/auth/auth.service";
 import { UserRepository } from "../modules/user/user.repository";
 import { UserService } from "../modules/user/user.service";
+import { RedisConnection } from "./cashing/redis.connection";
 
 const userRepository = new UserRepository();
 const authService = new AuthService(userRepository);
@@ -21,9 +22,12 @@ const askUsRepository = new AskUsRepository();
 const askUsService = new AskUsService(askUsRepository);
 const askUsController = new AskUsController(askUsService);
 
+const redisConnection = RedisConnection.getInstance();
+
 export {
   authController,
   authService,
   userService,
   askUsController,
+  redisConnection
 };

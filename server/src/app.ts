@@ -1,11 +1,10 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import session from "express-session";
 // import pinoHttp from "pino-http";
 // import logger from "./common/logger/logger";
-import { askUsController, authController } from "./common/dic";
+import { askUsController, authController, redisConnection } from "./common/dic";
 import { CONFIG } from "./config";
 import RedisStore from "connect-redis";
-import { RedisConnection } from "./common/cashing/redis.connection";
 import cors from "cors";
 
 export class App {
@@ -16,6 +15,7 @@ export class App {
     this.addSessions();
     this.registerMiddlewares();
     this.registerRoutes();
+    this.registerErrorHandling(); // Error handling middleware should be registered last
   }
 
   private registerMiddlewares(): void {
@@ -49,8 +49,6 @@ export class App {
   }
 
   private addSessions(): void {
-    const redisConnection = RedisConnection.getInstance();
-
     const redisStore = new RedisStore({
       client: redisConnection.getClient(),
       ttl: 86400,
@@ -65,11 +63,27 @@ export class App {
         saveUninitialized: false,
         name: "sid",
         cookie: {
-          secure: CONFIG.server.nodeEnv === "prod" ? true : false, // Set to true if using HTTPS
+          secure: CONFIG.server.nodeEnv === "prod", // Set to true if using HTTPS
           maxAge: 1000 * 60 * 60 * 24,
           httpOnly: true,
         },
       })
+    );
+  }
+
+  private registerErrorHandling(): void {
+    this.app.use(
+      (err: any, req: Request, res: Response, next: NextFunction): void => {
+        console.error("Unhandled error:", err.message);
+
+        if (err.statusCode) {
+          res.status(err.statusCode).json({ message: err.message });
+        }
+
+        res.status(500).json({
+          message: "Internal Server Error",
+        });
+      }
     );
   }
 }
